@@ -89,3 +89,8 @@ FleetFlow/
 │       └── pages/        # Dashboard, Vehicles, Drivers, Trips, Logs
 └── README.md
 ```
+## Contributors
+- Het Patel
+- Anshul Patel
+- Dev Patel
+- Dhruval Patel
