@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const maintenanceController = require('../controllers/maintenance.controller');
 const validate = require('../middleware/validate');
-const { createMaintenanceLog } = require('../validators/maintenance.validator');
+const { createMaintenance } = require('../validators/maintenance.validator');
 const { authenticate, authorize } = require('../middleware/auth');
 const { UserRole } = require('../enums');
 
@@ -15,7 +15,7 @@ router.get('/:id', maintenanceController.getById);
 router.post(
   '/',
   authorize(UserRole.FLEET_MANAGER),
-  validate(createMaintenanceLog),
+  validate(createMaintenance),
   maintenanceController.create
 );
 
