@@ -1,5 +1,16 @@
 import { useState, useEffect } from 'react';
 import { analyticsAPI } from '../api';
+import {
+  BarChart3,
+  Fuel,
+  IndianRupee,
+  TrendingUp,
+  AlertTriangle,
+  Truck,
+  Map as MapIcon,
+  TrendingDown,
+  CheckCircle2
+} from 'lucide-react';
 
 export default function DashboardPage() {
   const [fleet, setFleet] = useState(null);
@@ -58,21 +69,25 @@ export default function DashboardPage() {
       {/* Tab Navigation */}
       <div className="tab-switch" style={{ marginBottom: 20 }}>
         {[
-          { key: 'overview', label: '📊 Overview' },
-          { key: 'efficiency', label: '⛽ Fuel Efficiency' },
-          { key: 'roi', label: '💰 Vehicle ROI' },
-          { key: 'utilization', label: '📈 Utilization' },
-          { key: 'deadstock', label: '⚠️ Dead Stock' },
-        ].map(tb => (
-          <button key={tb.key} className={`tab-btn ${activeTab === tb.key ? 'active' : ''}`} onClick={() => setActiveTab(tb.key)}>
-            {tb.label}
-            {tb.key === 'deadstock' && deadStock?.dead_stock_count > 0 && (
-              <span style={{ background: 'var(--accent-danger)', color: '#fff', borderRadius: 10, padding: '1px 6px', fontSize: 11, marginLeft: 4 }}>
-                {deadStock.dead_stock_count}
-              </span>
-            )}
-          </button>
-        ))}
+          { key: 'overview', label: 'Overview', icon: BarChart3 },
+          { key: 'efficiency', label: 'Fuel Efficiency', icon: Fuel },
+          { key: 'roi', label: 'Vehicle ROI', icon: IndianRupee },
+          { key: 'utilization', label: 'Utilization', icon: TrendingUp },
+          { key: 'deadstock', label: 'Dead Stock', icon: AlertTriangle },
+        ].map(tb => {
+          const Icon = tb.icon;
+          return (
+            <button key={tb.key} className={`tab-btn ${activeTab === tb.key ? 'active' : ''}`} onClick={() => setActiveTab(tb.key)}>
+              <Icon size={16} style={{ marginRight: 6 }} />
+              {tb.label}
+              {tb.key === 'deadstock' && deadStock?.dead_stock_count > 0 && (
+                <span style={{ background: 'var(--accent-danger)', color: '#1e3a8a', borderRadius: 10, padding: '1px 6px', fontSize: 11, marginLeft: 4 }}>
+                  {deadStock.dead_stock_count}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
 
       {/* ─── OVERVIEW TAB ─── */}
@@ -80,28 +95,28 @@ export default function DashboardPage() {
         <>
           <div className="stats-grid">
             <div className="stat-card stat-primary">
-              <div className="stat-icon">🚛</div>
+              <div className="stat-icon"><Truck size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">{fleet?.total_vehicles || 0}</span>
                 <span className="stat-label">Total Vehicles</span>
               </div>
             </div>
             <div className="stat-card stat-success">
-              <div className="stat-icon">🗺️</div>
+              <div className="stat-icon"><MapIcon size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">{trips?.total_trips || 0}</span>
                 <span className="stat-label">Total Trips</span>
               </div>
             </div>
             <div className="stat-card stat-warning">
-              <div className="stat-icon">💰</div>
+              <div className="stat-icon"><IndianRupee size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">₹{Number(trips?.completed?.total_revenue || 0).toLocaleString()}</span>
                 <span className="stat-label">Total Revenue</span>
               </div>
             </div>
             <div className="stat-card stat-danger">
-              <div className="stat-icon">⛽</div>
+              <div className="stat-icon"><Fuel size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">₹{Number(fuel?.total_fuel_cost || 0).toLocaleString()}</span>
                 <span className="stat-label">Fuel Costs</span>
@@ -179,7 +194,7 @@ export default function DashboardPage() {
         <>
           <div className="stats-grid">
             <div className="stat-card stat-primary">
-              <div className="stat-icon">⛽</div>
+              <div className="stat-icon"><Fuel size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">{fuelEfficiency?.fleet_average_km_per_liter || '—'}</span>
                 <span className="stat-label">Fleet Avg km/L</span>
@@ -205,7 +220,7 @@ export default function DashboardPage() {
                 <tbody>
                   {fuelEfficiency?.vehicles?.map(v => (
                     <tr key={v.vehicle_id}>
-                      <td><strong>{v.vehicle_name}</strong><br/><small className="text-muted">{v.license_plate}</small></td>
+                      <td><strong>{v.vehicle_name}</strong><br /><small className="text-muted">{v.license_plate}</small></td>
                       <td>{v.vehicle_type}</td>
                       <td>{Number(v.total_distance_km).toLocaleString()}</td>
                       <td>{Number(v.total_liters).toFixed(1)}</td>
@@ -233,21 +248,21 @@ export default function DashboardPage() {
         <>
           <div className="stats-grid">
             <div className="stat-card stat-success">
-              <div className="stat-icon">💰</div>
+              <div className="stat-icon"><IndianRupee size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">₹{Number(vehicleROI?.fleet_total_revenue || 0).toLocaleString()}</span>
                 <span className="stat-label">Fleet Revenue</span>
               </div>
             </div>
             <div className="stat-card stat-danger">
-              <div className="stat-icon">📉</div>
+              <div className="stat-icon"><TrendingDown size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">₹{Number(vehicleROI?.fleet_total_costs || 0).toLocaleString()}</span>
                 <span className="stat-label">Fleet Costs</span>
               </div>
             </div>
             <div className="stat-card stat-primary">
-              <div className="stat-icon">📊</div>
+              <div className="stat-icon"><BarChart3 size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value" style={{ color: (vehicleROI?.fleet_net_profit || 0) >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
                   ₹{Number(vehicleROI?.fleet_net_profit || 0).toLocaleString()}
@@ -275,7 +290,7 @@ export default function DashboardPage() {
                 <tbody>
                   {vehicleROI?.vehicles?.map(v => (
                     <tr key={v.vehicle_id}>
-                      <td><strong>{v.vehicle_name}</strong><br/><small className="text-muted">{v.license_plate}</small></td>
+                      <td><strong>{v.vehicle_name}</strong><br /><small className="text-muted">{v.license_plate}</small></td>
                       <td>{v.acquisition_cost > 0 ? `₹${Number(v.acquisition_cost).toLocaleString()}` : '—'}</td>
                       <td style={{ color: 'var(--accent-success)' }}>₹{Number(v.total_revenue).toLocaleString()}</td>
                       <td style={{ color: 'var(--accent-danger)' }}>₹{Number(v.total_fuel_cost).toLocaleString()}</td>
@@ -302,7 +317,7 @@ export default function DashboardPage() {
         <>
           <div className="stats-grid">
             <div className="stat-card stat-primary">
-              <div className="stat-icon">📈</div>
+              <div className="stat-icon"><TrendingUp size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">{utilization?.fleet_avg_utilization || 0}%</span>
                 <span className="stat-label">Fleet Avg Utilization</span>
@@ -328,7 +343,7 @@ export default function DashboardPage() {
                 <tbody>
                   {utilization?.vehicles?.map(v => (
                     <tr key={v.vehicle_id}>
-                      <td><strong>{v.vehicle_name}</strong><br/><small className="text-muted">{v.license_plate}</small></td>
+                      <td><strong>{v.vehicle_name}</strong><br /><small className="text-muted">{v.license_plate}</small></td>
                       <td><span className={`status-badge status-${v.current_status.toLowerCase().replace(/[_ ]/g, '-')}`}>{v.current_status.replace('_', ' ')}</span></td>
                       <td>{v.total_days}</td>
                       <td>{v.active_days}</td>
@@ -336,7 +351,7 @@ export default function DashboardPage() {
                       <td>{v.trip_count}</td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 60, height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 4, overflow: 'hidden' }}>
+                          <div style={{ width: 60, height: 8, background: 'rgba(0,0,0,0.08)', borderRadius: 4, overflow: 'hidden' }}>
                             <div style={{
                               width: `${v.utilization_rate}%`,
                               height: '100%',
@@ -361,14 +376,14 @@ export default function DashboardPage() {
         <>
           <div className="stats-grid">
             <div className="stat-card stat-danger">
-              <div className="stat-icon">⚠️</div>
+              <div className="stat-icon"><AlertTriangle size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">{deadStock?.dead_stock_count || 0}</span>
                 <span className="stat-label">Dead Stock Vehicles</span>
               </div>
             </div>
             <div className="stat-card stat-warning">
-              <div className="stat-icon">💸</div>
+              <div className="stat-icon"><IndianRupee size={32} /></div>
               <div className="stat-info">
                 <span className="stat-value">₹{Number(deadStock?.total_capital_tied_up || 0).toLocaleString()}</span>
                 <span className="stat-label">Capital Tied Up</span>
@@ -393,7 +408,7 @@ export default function DashboardPage() {
                 <tbody>
                   {deadStock?.vehicles?.map(v => (
                     <tr key={v.vehicle_id} style={{ background: v.idle_days > 60 ? 'rgba(239,68,68,0.06)' : 'rgba(245,158,11,0.04)' }}>
-                      <td><strong>{v.vehicle_name}</strong><br/><small className="text-muted">{v.license_plate}</small></td>
+                      <td><strong>{v.vehicle_name}</strong><br /><small className="text-muted">{v.license_plate}</small></td>
                       <td>{v.vehicle_type}</td>
                       <td><span className={`status-badge status-${v.current_status.toLowerCase().replace(/[_ ]/g, '-')}`}>{v.current_status.replace('_', ' ')}</span></td>
                       <td>{v.last_trip_date || <span className="text-danger">Never used</span>}</td>
@@ -404,8 +419,8 @@ export default function DashboardPage() {
                 </tbody>
               </table>
               {(!deadStock?.vehicles || deadStock.vehicles.length === 0) && (
-                <div className="empty-state" style={{ color: 'var(--accent-success)' }}>
-                  ✅ No dead stock! All vehicles have been active within the last {deadStock?.threshold_days || 30} days.
+                <div className="empty-state" style={{ color: 'var(--accent-success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CheckCircle2 size={18} style={{ marginRight: 8 }} /> No dead stock! All vehicles have been active within the last {deadStock?.threshold_days || 30} days.
                 </div>
               )}
             </div>

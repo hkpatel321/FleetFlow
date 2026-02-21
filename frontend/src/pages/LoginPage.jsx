@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Target } from 'lucide-react';
 import { ROLE_LABELS, ROLE_ICONS, ROLE_COLORS } from '../config/roles';
 
 const DEMO_ACCOUNTS = [
@@ -35,9 +36,16 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
+      {/* Animated Background Waves */}
+      <div className="login-wave-container">
+        <div className="login-wave login-wave3"></div>
+        <div className="login-wave login-wave2"></div>
+        <div className="login-wave login-wave1"></div>
+      </div>
+
       <div className="login-container" style={{ maxWidth: 480 }}>
         <div className="login-header">
-          <div className="login-logo">🚀</div>
+          <div className="login-logo"><Target size={48} color="#1e36be" /></div>
           <h1>FleetFlow</h1>
           <p>Fleet & Logistics Management System</p>
         </div>
@@ -81,16 +89,21 @@ export default function LoginPage() {
                 onClick={() => quickLogin(acc)}
                 style={{
                   background: email === acc.email
-                    ? `${ROLE_COLORS[acc.role]}22`
-                    : 'rgba(255,255,255,0.03)',
-                  border: `1.5px solid ${email === acc.email ? ROLE_COLORS[acc.role] : 'rgba(255,255,255,0.08)'}`,
+                    ? `${ROLE_COLORS['fleet_manager']}22`
+                    : 'rgba(0,0,0,0.03)',
+                  border: `1.5px solid ${email === acc.email ? ROLE_COLORS['fleet_manager'] : 'rgba(0,0,0,0.08)'}`,
                   borderRadius: 10, padding: '12px 10px',
                   cursor: 'pointer', textAlign: 'left',
                   transition: 'all 0.2s',
                 }}
               >
-                <div style={{ fontSize: 18, marginBottom: 4 }}>{ROLE_ICONS[acc.role]}</div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: ROLE_COLORS[acc.role] }}>
+                <div style={{ fontSize: 18, marginBottom: 4, color: ROLE_COLORS['fleet_manager'] }}>
+                  {(() => {
+                    const RoleIcon = ROLE_ICONS[acc.role];
+                    return RoleIcon ? <RoleIcon size={20} /> : null;
+                  })()}
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: ROLE_COLORS['fleet_manager'] }}>
                   {ROLE_LABELS[acc.role]}
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { analyticsAPI } from '../api';
 import api from '../api';
+import { Download, Printer, AlertTriangle } from 'lucide-react';
 
 export default function ReportsPage() {
   const [financial, setFinancial] = useState(null);
@@ -84,17 +85,17 @@ export default function ReportsPage() {
           <p className="page-subtitle">Data-driven decision making — FleetFlow</p>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button className="btn btn-primary" onClick={() => downloadCSV('fleet-health', 'fleet_health_report.csv')}>
-            📥 Fleet Health CSV
+          <button className="btn btn-primary" onClick={() => downloadCSV('fleet-health', 'fleet_health_report.csv')} style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <Download size={16} style={{ marginRight: 6 }} /> Fleet Health CSV
           </button>
-          <button className="btn btn-outline" onClick={() => downloadCSV('driver-payroll', 'driver_payroll_report.csv')}>
-            📥 Driver Payroll CSV
+          <button className="btn btn-outline" onClick={() => downloadCSV('driver-payroll', 'driver_payroll_report.csv')} style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <Download size={16} style={{ marginRight: 6 }} /> Driver Payroll CSV
           </button>
-          <button className="btn btn-outline" onClick={() => downloadCSV('trip-revenue', 'trip_revenue_report.csv')}>
-            📥 Trip Revenue CSV
+          <button className="btn btn-outline" onClick={() => downloadCSV('trip-revenue', 'trip_revenue_report.csv')} style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <Download size={16} style={{ marginRight: 6 }} /> Trip Revenue CSV
           </button>
-          <button className="btn btn-outline" onClick={() => window.print()}>
-            🖨️ PDF / Print
+          <button className="btn btn-outline" onClick={() => window.print()} style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <Printer size={16} style={{ marginRight: 6 }} /> PDF / Print
           </button>
         </div>
       </div>
@@ -108,7 +109,7 @@ export default function ReportsPage() {
           borderRadius: 12, padding: '20px 24px',
         }}>
           <div style={{ fontSize: 13, color: 'rgba(14,165,233,0.9)', fontWeight: 600, marginBottom: 8 }}>Total Fuel Cost</div>
-          <div style={{ fontSize: 28, fontWeight: 700, color: '#fff' }}>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#1e3a8a' }}>
             ₹{Number(fSummary.total_fuel_cost || 0).toLocaleString()}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
@@ -162,19 +163,19 @@ export default function ReportsPage() {
                     <div style={{ width: 80, fontSize: 11, color: 'var(--text-secondary)', textAlign: 'right', flexShrink: 0 }}>
                       {v.vehicle_name?.length > 10 ? v.vehicle_name.slice(0, 10) + '…' : v.vehicle_name}
                     </div>
-                    <div style={{ flex: 1, height: 22, background: 'rgba(255,255,255,0.04)', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
+                    <div style={{ flex: 1, height: 22, background: 'rgba(0,0,0,0.04)', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
                       <div style={{
                         width: `${(eff / maxEff) * 100}%`,
                         height: '100%',
                         borderRadius: 6,
                         background: eff >= 8 ? 'linear-gradient(90deg, #22c55e, #16a34a)'
                           : eff >= 4 ? 'linear-gradient(90deg, #f59e0b, #eab308)'
-                          : 'linear-gradient(90deg, #ef4444, #dc2626)',
+                            : 'linear-gradient(90deg, #ef4444, #dc2626)',
                         transition: 'width 0.8s ease',
                       }} />
                       <span style={{
                         position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)',
-                        fontSize: 11, fontWeight: 600, color: '#fff',
+                        fontSize: 11, fontWeight: 600, color: '#1e3a8a',
                       }}>{eff} km/L</span>
                     </div>
                   </div>
@@ -195,7 +196,7 @@ export default function ReportsPage() {
           {top5Costly.length > 0 ? (
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: 200, gap: 8, paddingBottom: 30, position: 'relative' }}>
               {/* Y-axis line */}
-              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 30, width: 1, background: 'rgba(255,255,255,0.1)' }} />
+              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 30, width: 1, background: 'rgba(0,0,0,0.1)' }} />
               {top5Costly.map((v, i) => {
                 const pct = (v.total_costs / maxCost) * 100;
                 const colors = ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7'];
@@ -229,7 +230,7 @@ export default function ReportsPage() {
       <div className="card" style={{ padding: 20, marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h3 className="card-title" style={{ margin: 0 }}>Financial Summary</h3>
-          <button className="btn btn-sm btn-primary" onClick={() => downloadCSV('fleet-health', 'financial_report.csv')}>📥 Export</button>
+          <button className="btn btn-sm btn-primary" onClick={() => downloadCSV('fleet-health', 'financial_report.csv')} style={{ display: 'inline-flex', alignItems: 'center' }}><Download size={14} style={{ marginRight: 4 }} /> Export</button>
         </div>
         <div className="table-container">
           <table className="data-table">
@@ -281,7 +282,7 @@ export default function ReportsPage() {
             <tbody>
               {vehicleROI?.vehicles?.map(v => (
                 <tr key={v.vehicle_id}>
-                  <td><strong>{v.vehicle_name}</strong><br/><small className="text-muted">{v.license_plate}</small></td>
+                  <td><strong>{v.vehicle_name}</strong><br /><small className="text-muted">{v.license_plate}</small></td>
                   <td>{v.acquisition_cost > 0 ? `₹${Number(v.acquisition_cost).toLocaleString()}` : '—'}</td>
                   <td style={{ color: '#22c55e' }}>₹{Number(v.total_revenue).toLocaleString()}</td>
                   <td style={{ color: '#ef4444' }}>₹{Number(v.total_fuel_cost).toLocaleString()}</td>
@@ -291,7 +292,7 @@ export default function ReportsPage() {
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 50, height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' }}>
+                      <div style={{ width: 50, height: 6, background: 'rgba(0,0,0,0.06)', borderRadius: 3, overflow: 'hidden' }}>
                         <div style={{
                           width: `${Math.min(100, Math.max(0, Number(v.roi_percentage) || 0))}%`,
                           height: '100%', borderRadius: 3,
@@ -313,11 +314,11 @@ export default function ReportsPage() {
       {/* ─── FLEET HEALTH TABLE ─── */}
       <div className="card" style={{ padding: 20, marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <h3 className="card-title" style={{ margin: 0 }}>Fleet Health Audit</h3>
             <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '4px 0 0' }}>{fleetData?.report?.length || 0} vehicles</p>
           </div>
-          <button className="btn btn-sm btn-primary" onClick={() => downloadCSV('fleet-health', 'fleet_health_report.csv')}>📥 CSV</button>
+          <button className="btn btn-sm btn-primary" onClick={() => downloadCSV('fleet-health', 'fleet_health_report.csv')} style={{ display: 'inline-flex', alignItems: 'center' }}><Download size={14} style={{ marginRight: 4 }} /> CSV</button>
         </div>
         <div className="table-container">
           <table className="data-table" style={{ fontSize: 12 }}>
@@ -337,8 +338,8 @@ export default function ReportsPage() {
             <tbody>
               {fleetData?.report?.map((v, i) => (
                 <tr key={i}>
-                  <td><strong>{v.name}</strong><br/><small className="text-muted">{v.license_plate}</small></td>
-                  <td><span className={`status-badge status-${v.status.toLowerCase().replace(/[_ ]/g, '-')}`}>{v.status.replace('_',' ')}</span></td>
+                  <td><strong>{v.name}</strong><br /><small className="text-muted">{v.license_plate}</small></td>
+                  <td><span className={`status-badge status-${v.status.toLowerCase().replace(/[_ ]/g, '-')}`}>{v.status.replace('_', ' ')}</span></td>
                   <td>{v.total_trips}</td>
                   <td>{Number(v.total_distance_km).toLocaleString()} km</td>
                   <td style={{ color: '#22c55e' }}>₹{Number(v.total_revenue).toLocaleString()}</td>
@@ -347,7 +348,7 @@ export default function ReportsPage() {
                   <td>{v.roi_percentage ? `${v.roi_percentage}%` : '—'}</td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <div style={{ width: 40, height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' }}>
+                      <div style={{ width: 40, height: 6, background: 'rgba(0,0,0,0.06)', borderRadius: 3, overflow: 'hidden' }}>
                         <div style={{
                           width: `${v.utilization_rate}%`, height: '100%', borderRadius: 3,
                           background: Number(v.utilization_rate) >= 50 ? '#22c55e' : Number(v.utilization_rate) >= 20 ? '#f59e0b' : '#ef4444',
@@ -366,11 +367,11 @@ export default function ReportsPage() {
       {/* ─── DRIVER PAYROLL TABLE ─── */}
       <div className="card" style={{ padding: 20, marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <h3 className="card-title" style={{ margin: 0 }}>Driver Payroll Report</h3>
             <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '4px 0 0' }}>{driverData?.report?.length || 0} drivers</p>
           </div>
-          <button className="btn btn-sm btn-outline" onClick={() => downloadCSV('driver-payroll', 'driver_payroll_report.csv')}>📥 CSV</button>
+          <button className="btn btn-sm btn-outline" onClick={() => downloadCSV('driver-payroll', 'driver_payroll_report.csv')} style={{ display: 'inline-flex', alignItems: 'center' }}><Download size={14} style={{ marginRight: 4 }} /> CSV</button>
         </div>
         <div className="table-container">
           <table className="data-table" style={{ fontSize: 12 }}>
@@ -389,12 +390,12 @@ export default function ReportsPage() {
             <tbody>
               {driverData?.report?.map((d, i) => (
                 <tr key={i} style={d.license_expired === 'YES' ? { background: 'rgba(239,68,68,0.05)' } : {}}>
-                  <td><strong>{d.full_name}</strong><br/><small className="text-muted">{d.phone || '—'}</small></td>
-                  <td>{d.license_number}<br/><small className="text-muted">{d.license_category}</small></td>
+                  <td><strong>{d.full_name}</strong><br /><small className="text-muted">{d.phone || '—'}</small></td>
+                  <td>{d.license_number}<br /><small className="text-muted">{d.license_category}</small></td>
                   <td style={{ color: d.license_expired === 'YES' ? '#ef4444' : 'inherit' }}>
-                    {d.license_expiry} {d.license_expired === 'YES' && '⚠️'}
+                    {d.license_expiry} {d.license_expired === 'YES' && <AlertTriangle size={14} style={{ marginLeft: 6, color: 'var(--accent-danger)', verticalAlign: 'middle' }} />}
                   </td>
-                  <td><span className={`status-badge status-${d.status.toLowerCase().replace(/[_ ]/g, '-')}`}>{d.status.replace('_',' ')}</span></td>
+                  <td><span className={`status-badge status-${d.status.toLowerCase().replace(/[_ ]/g, '-')}`}>{d.status.replace('_', ' ')}</span></td>
                   <td><strong>{d.safety_score}</strong></td>
                   <td>{d.completed_trips}/{d.total_trips} ({d.completion_rate}%)</td>
                   <td style={{ color: '#22c55e', fontWeight: 600 }}>₹{Number(d.total_revenue_generated).toLocaleString()}</td>

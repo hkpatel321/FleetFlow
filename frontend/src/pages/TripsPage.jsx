@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { tripsAPI, vehiclesAPI, driversAPI } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { Rocket, XCircle, CheckCircle2 } from 'lucide-react';
 
 export default function TripsPage() {
   const [trips, setTrips] = useState([]);
@@ -126,7 +127,7 @@ export default function TripsPage() {
           <form className="inline-form" onSubmit={handleCreate}>
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>Vehicle (Available only)</label>
-              <select value={form.vehicle_id} onChange={e => setForm({...form, vehicle_id: e.target.value})} required>
+              <select value={form.vehicle_id} onChange={e => setForm({ ...form, vehicle_id: e.target.value })} required>
                 <option value="">Select Vehicle</option>
                 {availableVehicles.map(v => (
                   <option key={v.id} value={v.id}>
@@ -137,7 +138,7 @@ export default function TripsPage() {
             </div>
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>Driver (On Duty, valid license)</label>
-              <select value={form.driver_id} onChange={e => setForm({...form, driver_id: e.target.value})} required>
+              <select value={form.driver_id} onChange={e => setForm({ ...form, driver_id: e.target.value })} required>
                 <option value="">Select Driver</option>
                 {availableDrivers.map(d => (
                   <option key={d.id} value={d.id}>
@@ -146,8 +147,8 @@ export default function TripsPage() {
                 ))}
               </select>
             </div>
-            <input placeholder="Origin *" value={form.origin} onChange={e => setForm({...form, origin: e.target.value})} required />
-            <input placeholder="Destination *" value={form.destination} onChange={e => setForm({...form, destination: e.target.value})} required />
+            <input placeholder="Origin *" value={form.origin} onChange={e => setForm({ ...form, origin: e.target.value })} required />
+            <input placeholder="Destination *" value={form.destination} onChange={e => setForm({ ...form, destination: e.target.value })} required />
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>
                 Cargo Weight (kg) {selectedVehicle && <span>/ max {Number(selectedVehicle.max_capacity_kg).toLocaleString()}kg</span>}
@@ -156,13 +157,13 @@ export default function TripsPage() {
                 type="number"
                 placeholder="Cargo Weight"
                 value={form.cargo_weight_kg}
-                onChange={e => setForm({...form, cargo_weight_kg: e.target.value})}
+                onChange={e => setForm({ ...form, cargo_weight_kg: e.target.value })}
                 max={selectedVehicle?.max_capacity_kg}
                 required
               />
             </div>
-            <input placeholder="Cargo Description" value={form.cargo_description} onChange={e => setForm({...form, cargo_description: e.target.value})} />
-            <input placeholder="Revenue (₹)" type="number" value={form.revenue} onChange={e => setForm({...form, revenue: e.target.value})} />
+            <input placeholder="Cargo Description" value={form.cargo_description} onChange={e => setForm({ ...form, cargo_description: e.target.value })} />
+            <input placeholder="Revenue (₹)" type="number" value={form.revenue} onChange={e => setForm({ ...form, revenue: e.target.value })} />
             <button type="submit" className="btn btn-primary">Create Draft</button>
           </form>
         </div>
@@ -183,7 +184,7 @@ export default function TripsPage() {
                 <input
                   type="number"
                   value={completeForm.end_odometer}
-                  onChange={e => setCompleteForm({...completeForm, end_odometer: e.target.value})}
+                  onChange={e => setCompleteForm({ ...completeForm, end_odometer: e.target.value })}
                   min={completeForm.startOdometer + 1}
                   required
                 />
@@ -195,7 +196,7 @@ export default function TripsPage() {
               </div>
               <div className="form-group">
                 <label>Revenue (₹, optional update)</label>
-                <input type="number" value={completeForm.revenue} onChange={e => setCompleteForm({...completeForm, revenue: e.target.value})} />
+                <input type="number" value={completeForm.revenue} onChange={e => setCompleteForm({ ...completeForm, revenue: e.target.value })} />
               </div>
               <div className="modal-actions">
                 <button type="button" className="btn btn-outline" onClick={() => setCompleteForm({ tripId: null, end_odometer: '', revenue: '', startOdometer: 0 })}>Cancel</button>
@@ -234,7 +235,7 @@ export default function TripsPage() {
                     </div>
                   )}
                 </td>
-                <td>{t.vehicle?.name || '—'}<br/><small className="text-muted">{t.vehicle?.license_plate}</small></td>
+                <td>{t.vehicle?.name || '—'}<br /><small className="text-muted">{t.vehicle?.license_plate}</small></td>
                 <td>{t.driver?.full_name || '—'}</td>
                 <td>{Number(t.cargo_weight_kg).toLocaleString()} kg</td>
                 <td>
@@ -251,21 +252,18 @@ export default function TripsPage() {
                   <td>
                     <div className="action-group">
                       {t.status === 'Draft' && (
-                        <>
-                          <button className="btn btn-sm btn-success" onClick={() => handleAction('dispatch', t.id)}>🚀 Dispatch</button>
-                          <button className="btn btn-sm btn-danger" onClick={() => handleAction('cancel', t.id)}>✕ Cancel</button>
-                        </>
+                        <button className="btn btn-sm btn-success" onClick={() => handleAction('dispatch', t.id)} style={{ display: 'inline-flex', alignItems: 'center' }}><Rocket size={14} style={{ marginRight: 4 }} /> Dispatch</button>
+                      )}
+                      {['Draft', 'Dispatched'].includes(t.status) && (
+                        <button className="btn btn-sm btn-danger" onClick={() => handleAction('cancel', t.id)} style={{ display: 'inline-flex', alignItems: 'center' }}><XCircle size={14} style={{ marginRight: 4 }} /> Cancel</button>
                       )}
                       {t.status === 'Dispatched' && (
-                        <>
-                          <button className="btn btn-sm btn-primary" onClick={() => setCompleteForm({
-                            tripId: t.id,
-                            end_odometer: '',
-                            revenue: '',
-                            startOdometer: Number(t.start_odometer || 0),
-                          })}>✅ Complete</button>
-                          <button className="btn btn-sm btn-danger" onClick={() => handleAction('cancel', t.id)}>✕ Cancel</button>
-                        </>
+                        <button className="btn btn-sm btn-primary" onClick={() => setCompleteForm({
+                          tripId: t.id,
+                          startOdometer: Number(t.start_odometer || 0),
+                          end_odometer: (Number(t.start_odometer || 0)) + 1, // Pre-fill with start + 1
+                          revenue: t.revenue || ''
+                        })} style={{ display: 'inline-flex', alignItems: 'center' }}><CheckCircle2 size={14} style={{ marginRight: 4 }} /> Complete</button>
                       )}
                       {(t.status === 'Completed' || t.status === 'Cancelled') && (
                         <span className="text-muted" style={{ fontSize: 12 }}>

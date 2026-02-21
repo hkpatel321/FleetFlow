@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { vehiclesAPI } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { AlertTriangle, Edit2, Ban, Trash2 } from 'lucide-react';
 
 const STATUS_OPTIONS = ['Available', 'On_Trip', 'In_Shop', 'Retired'];
 const TYPE_OPTIONS = ['Truck', 'Van', 'Bike'];
@@ -118,15 +119,15 @@ export default function VehiclesPage() {
           <h3>{editingVehicle ? `Edit: ${editingVehicle.name}` : 'Add New Vehicle'}</h3>
           {error && <div className="alert alert-error">{error}</div>}
           <form className="inline-form" onSubmit={handleSubmit}>
-            <input placeholder="Name *" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
-            <input placeholder="Model" value={form.model} onChange={e => setForm({...form, model: e.target.value})} />
-            <input placeholder="License Plate *" value={form.license_plate} onChange={e => setForm({...form, license_plate: e.target.value})} required />
-            <select value={form.vehicle_type} onChange={e => setForm({...form, vehicle_type: e.target.value})}>
+            <input placeholder="Name *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+            <input placeholder="Model" value={form.model} onChange={e => setForm({ ...form, model: e.target.value })} />
+            <input placeholder="License Plate *" value={form.license_plate} onChange={e => setForm({ ...form, license_plate: e.target.value })} required />
+            <select value={form.vehicle_type} onChange={e => setForm({ ...form, vehicle_type: e.target.value })}>
               {TYPE_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
-            <input placeholder="Max Capacity (kg) *" type="number" value={form.max_capacity_kg} onChange={e => setForm({...form, max_capacity_kg: e.target.value})} required />
-            <input placeholder="Odometer (km)" type="number" value={form.odometer_km} onChange={e => setForm({...form, odometer_km: e.target.value})} />
-            <input placeholder="Region" value={form.region} onChange={e => setForm({...form, region: e.target.value})} />
+            <input placeholder="Max Capacity (kg) *" type="number" value={form.max_capacity_kg} onChange={e => setForm({ ...form, max_capacity_kg: e.target.value })} required />
+            <input placeholder="Odometer (km)" type="number" value={form.odometer_km} onChange={e => setForm({ ...form, odometer_km: e.target.value })} />
+            <input placeholder="Region" value={form.region} onChange={e => setForm({ ...form, region: e.target.value })} />
             <button type="submit" className="btn btn-primary">{editingVehicle ? 'Update' : 'Create'}</button>
             {editingVehicle && <button type="button" className="btn btn-outline" onClick={closeForm}>Cancel</button>}
           </form>
@@ -137,7 +138,7 @@ export default function VehiclesPage() {
       {deleteConfirm && (
         <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h3>⚠️ Confirm Delete</h3>
+            <h3 style={{ display: 'flex', alignItems: 'center' }}><AlertTriangle size={20} style={{ marginRight: 8, color: 'var(--accent-warning)' }} /> Confirm Delete</h3>
             <p style={{ color: 'var(--text-secondary)', margin: '12px 0' }}>
               Are you sure you want to delete vehicle <strong>"{deleteConfirm.name}"</strong> ({deleteConfirm.license_plate})?
               This action cannot be undone.
@@ -168,7 +169,7 @@ export default function VehiclesPage() {
           <tbody>
             {vehicles.map(v => (
               <tr key={v.id}>
-                <td><strong>{v.name}</strong><br/><small className="text-muted">{v.model}</small></td>
+                <td><strong>{v.name}</strong><br /><small className="text-muted">{v.model}</small></td>
                 <td><code>{v.license_plate}</code></td>
                 <td><span className={`type-badge type-${v.vehicle_type.toLowerCase()}`}>{v.vehicle_type}</span></td>
                 <td>{Number(v.max_capacity_kg).toLocaleString()} kg</td>
@@ -184,25 +185,26 @@ export default function VehiclesPage() {
                         onClick={() => openEditForm(v)}
                         disabled={v.status === 'Retired'}
                         title={v.status === 'Retired' ? 'Cannot edit retired vehicles' : 'Edit vehicle'}
+                        style={{ display: 'inline-flex', alignItems: 'center' }}
                       >
-                        ✏️ Edit
+                        <Edit2 size={14} style={{ marginRight: 4 }} /> Edit
                       </button>
 
                       {/* Retire / Restore toggle — the key "Out of Service" toggle */}
                       {v.status !== 'Retired' ? (
-                        <button className="btn btn-sm btn-danger" onClick={() => handleStatusChange(v.id, 'Retired')} title="Mark as Out of Service">
-                          🚫 Retire
+                        <button className="btn btn-sm btn-danger" onClick={() => handleStatusChange(v.id, 'Retired')} title="Mark as Out of Service" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          <Ban size={14} style={{ marginRight: 4, color: 'var(--accent-danger)' }} /> Retire
                         </button>
                       ) : (
-                        <button className="btn btn-sm btn-outline" disabled title="Retired vehicles cannot be restored">
-                          🚫 Retired
+                        <button className="btn btn-sm btn-outline" disabled title="Retired vehicles cannot be restored" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          <Ban size={14} style={{ marginRight: 4, color: 'var(--accent-danger)' }} /> Retired
                         </button>
                       )}
 
                       {/* Delete Button — only for Available vehicles */}
                       {v.status === 'Available' && (
-                        <button className="btn btn-sm btn-danger" onClick={() => setDeleteConfirm(v)} title="Delete vehicle">
-                          🗑️ Delete
+                        <button className="btn btn-sm btn-danger" onClick={() => setDeleteConfirm(v)} title="Delete vehicle" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          <Trash2 size={14} style={{ marginRight: 4 }} /> Delete
                         </button>
                       )}
 
@@ -226,6 +228,6 @@ export default function VehiclesPage() {
         </table>
         {vehicles.length === 0 && <div className="empty-state">No vehicles found. Add your first vehicle above.</div>}
       </div>
-    </div>
+    </div >
   );
 }

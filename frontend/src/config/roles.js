@@ -17,11 +17,13 @@ export const ROLE_LABELS = {
   [ROLES.FINANCIAL_ANALYST]: 'Financial Analyst',
 };
 
+import { Truck, ClipboardList, Shield, IndianRupee } from 'lucide-react';
+
 export const ROLE_ICONS = {
-  [ROLES.FLEET_MANAGER]: '🚛',
-  [ROLES.DISPATCHER]: '📋',
-  [ROLES.SAFETY_OFFICER]: '🛡️',
-  [ROLES.FINANCIAL_ANALYST]: '💰',
+  [ROLES.FLEET_MANAGER]: Truck,
+  [ROLES.DISPATCHER]: ClipboardList,
+  [ROLES.SAFETY_OFFICER]: Shield,
+  [ROLES.FINANCIAL_ANALYST]: IndianRupee,
 };
 
 export const ROLE_COLORS = {
@@ -38,13 +40,13 @@ export const ROLE_COLORS = {
  * false   = no access (won't show in sidebar)
  */
 export const ACCESS_MATRIX = {
-  dashboard:    { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'view' },
-  vehicles:     { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'view' },
-  drivers:      { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'full', [ROLES.FINANCIAL_ANALYST]: 'view' },
-  trips:        { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'full', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'view' },
-  maintenance:  { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'view' },
-  fuel:         { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'full' },
-  reports:      { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'full' },
+  dashboard: { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'view' },
+  vehicles: { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'view' },
+  drivers: { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'full', [ROLES.FINANCIAL_ANALYST]: 'view' },
+  trips: { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'full', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'view' },
+  maintenance: { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'view' },
+  fuel: { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'full' },
+  reports: { [ROLES.FLEET_MANAGER]: 'full', [ROLES.DISPATCHER]: 'view', [ROLES.SAFETY_OFFICER]: 'view', [ROLES.FINANCIAL_ANALYST]: 'full' },
 };
 
 /**
