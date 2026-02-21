@@ -7,32 +7,38 @@ const { UserRole } = require('../enums');
 
 router.use(authenticate);
 
+// View — everyone
 router.get('/', driverController.getAll);
 router.get('/:id', driverController.getById);
 
+// Create — fleet_manager + safety_officer
 router.post(
   '/',
-  authorize(UserRole.FLEET_MANAGER),
+  authorize(UserRole.FLEET_MANAGER, UserRole.SAFETY_OFFICER),
   validate(driverValidator.createDriver),
   driverController.create
 );
+
+// Update — fleet_manager + safety_officer
 router.put(
   '/:id',
   authorize(UserRole.FLEET_MANAGER, UserRole.SAFETY_OFFICER),
   validate(driverValidator.updateDriver),
   driverController.update
 );
+
+// Status change — fleet_manager + safety_officer
 router.patch(
   '/:id/status',
-  authorize(UserRole.FLEET_MANAGER),
+  authorize(UserRole.FLEET_MANAGER, UserRole.SAFETY_OFFICER),
   validate(driverValidator.changeStatus),
   driverController.changeStatus
 );
 
-// Auto-suspend all drivers with expired licenses
+// Auto-suspend — fleet_manager + safety_officer
 router.post(
   '/auto-suspend',
-  authorize(UserRole.FLEET_MANAGER),
+  authorize(UserRole.FLEET_MANAGER, UserRole.SAFETY_OFFICER),
   driverController.autoSuspendExpired
 );
 

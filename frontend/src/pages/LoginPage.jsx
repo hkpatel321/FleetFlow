@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ROLE_LABELS, ROLE_ICONS, ROLE_COLORS } from '../config/roles';
+
+const DEMO_ACCOUNTS = [
+  { email: 'admin@fleetflow.com', role: 'fleet_manager' },
+  { email: 'dispatcher@fleetflow.com', role: 'dispatcher' },
+  { email: 'safety@fleetflow.com', role: 'safety_officer' },
+  { email: 'finance@fleetflow.com', role: 'financial_analyst' },
+];
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -20,9 +28,14 @@ export default function LoginPage() {
     }
   };
 
+  const quickLogin = (account) => {
+    setEmail(account.email);
+    setPassword('password123');
+  };
+
   return (
     <div className="login-page">
-      <div className="login-container">
+      <div className="login-container" style={{ maxWidth: 480 }}>
         <div className="login-header">
           <div className="login-logo">🚀</div>
           <h1>FleetFlow</h1>
@@ -31,40 +44,62 @@ export default function LoginPage() {
 
         <form className="login-form" onSubmit={handleSubmit}>
           {error && <div className="alert alert-error">{error}</div>}
-          
+
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
-              id="email"
-              type="email"
-              value={email}
+              id="email" type="email" value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@fleetflow.com"
-              required
-              autoFocus
+              placeholder="Enter your email" required autoFocus
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
-              id="password"
-              type="password"
-              value={password}
+              id="password" type="password" value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
+              placeholder="••••••••" required
             />
           </div>
 
           <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
-
-          <div className="login-help">
-            <p>Demo credentials: <code>admin@fleetflow.com</code> / <code>password123</code></p>
-          </div>
         </form>
+
+        {/* Role Quick-Login Cards */}
+        <div style={{ marginTop: 24 }}>
+          <p style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', marginBottom: 12 }}>
+            Quick login — click a role card
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            {DEMO_ACCOUNTS.map((acc) => (
+              <button
+                key={acc.role}
+                type="button"
+                onClick={() => quickLogin(acc)}
+                style={{
+                  background: email === acc.email
+                    ? `${ROLE_COLORS[acc.role]}22`
+                    : 'rgba(255,255,255,0.03)',
+                  border: `1.5px solid ${email === acc.email ? ROLE_COLORS[acc.role] : 'rgba(255,255,255,0.08)'}`,
+                  borderRadius: 10, padding: '12px 10px',
+                  cursor: 'pointer', textAlign: 'left',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <div style={{ fontSize: 18, marginBottom: 4 }}>{ROLE_ICONS[acc.role]}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: ROLE_COLORS[acc.role] }}>
+                  {ROLE_LABELS[acc.role]}
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
+                  {acc.email}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

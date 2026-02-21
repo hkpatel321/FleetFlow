@@ -13,7 +13,7 @@ export default function DriversPage() {
   const [error, setError] = useState('');
   const [suspendResult, setSuspendResult] = useState(null);
   const { isAuthorized } = useAuth();
-  const canEdit = isAuthorized('fleet_manager');
+  const canEdit = isAuthorized('fleet_manager', 'safety_officer');
 
   const fetchDrivers = async () => {
     try {

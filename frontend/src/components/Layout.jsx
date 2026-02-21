@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { hasAccess, ROLE_LABELS, ROLE_ICONS, ROLE_COLORS } from '../config/roles';
 
+// Map page paths to module keys in ACCESS_MATRIX
 const NAV_ITEMS = [
-  { path: '/', label: 'Dashboard', icon: '📊' },
-  { path: '/vehicles', label: 'Vehicles', icon: '🚛' },
-  { path: '/drivers', label: 'Drivers', icon: '👤' },
-  { path: '/trips', label: 'Trips', icon: '🗺️' },
-  { path: '/maintenance', label: 'Maintenance', icon: '🔧' },
-  { path: '/fuel', label: 'Fuel Logs', icon: '⛽' },
-  { path: '/reports', label: 'Reports', icon: '📋' },
+  { path: '/', label: 'Dashboard', icon: '📊', module: 'dashboard' },
+  { path: '/vehicles', label: 'Vehicles', icon: '🚛', module: 'vehicles' },
+  { path: '/drivers', label: 'Drivers', icon: '👤', module: 'drivers' },
+  { path: '/trips', label: 'Trips', icon: '🗺️', module: 'trips' },
+  { path: '/maintenance', label: 'Maintenance', icon: '🔧', module: 'maintenance' },
+  { path: '/fuel', label: 'Fuel Logs', icon: '⛽', module: 'fuel' },
+  { path: '/reports', label: 'Reports', icon: '📋', module: 'reports' },
 ];
 
 export default function Layout() {
@@ -22,12 +24,8 @@ export default function Layout() {
     navigate('/login');
   };
 
-  const roleLabel = {
-    fleet_manager: 'Fleet Manager',
-    dispatcher: 'Dispatcher',
-    safety_officer: 'Safety Officer',
-    financial_analyst: 'Financial Analyst',
-  };
+  // Filter nav items by role access
+  const visibleNavItems = NAV_ITEMS.filter(item => hasAccess(user?.role, item.module));
 
   return (
     <div className="layout">
@@ -43,7 +41,7 @@ export default function Layout() {
         </div>
 
         <nav className="sidebar-nav">
-          {NAV_ITEMS.map((item) => (
+          {visibleNavItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -59,10 +57,14 @@ export default function Layout() {
         <div className="sidebar-footer">
           {sidebarOpen && (
             <div className="user-info">
-              <div className="user-avatar">{user?.email?.[0]?.toUpperCase()}</div>
+              <div className="user-avatar" style={{ background: ROLE_COLORS[user?.role] || '#3b82f6' }}>
+                {ROLE_ICONS[user?.role] || user?.email?.[0]?.toUpperCase()}
+              </div>
               <div className="user-details">
                 <span className="user-email">{user?.email}</span>
-                <span className="user-role">{roleLabel[user?.role] || user?.role}</span>
+                <span className="user-role" style={{ color: ROLE_COLORS[user?.role] }}>
+                  {ROLE_LABELS[user?.role] || user?.role}
+                </span>
               </div>
             </div>
           )}
