@@ -58,7 +58,7 @@ export default function Layout() {
           {sidebarOpen && (
             <div className="user-info">
               <div className="user-avatar" style={{ background: ROLE_COLORS[user?.role] || '#3b82f6' }}>
-                {ROLE_ICONS[user?.role] || user?.email?.[0]?.toUpperCase()}
+                {user?.role && ROLE_ICONS[user?.role] ? React.createElement(ROLE_ICONS[user?.role]) : (user?.email?.[0]?.toUpperCase())}
               </div>
               <div className="user-details">
                 <span className="user-email">{user?.email}</span>

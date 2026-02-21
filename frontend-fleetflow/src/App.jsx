@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import LandingPage from './pages/LandingPage';
 import VehiclesPage from './pages/VehiclesPage';
 import DriversPage from './pages/DriversPage';
 import TripsPage from './pages/TripsPage';
@@ -24,14 +25,15 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
+      <Route path="/" element={<LandingPage />} />
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route index element={<DashboardPage />} />
-        <Route path="/vehicles" element={<VehiclesPage />} />
-        <Route path="/drivers" element={<DriversPage />} />
-        <Route path="/trips" element={<TripsPage />} />
-        <Route path="/maintenance" element={<LogsPage />} />
-        <Route path="/fuel" element={<LogsPage />} />
-        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="vehicles" element={<VehiclesPage />} />
+        <Route path="drivers" element={<DriversPage />} />
+        <Route path="trips" element={<TripsPage />} />
+        <Route path="maintenance" element={<LogsPage />} />
+        <Route path="fuel" element={<LogsPage />} />
+        <Route path="reports" element={<ReportsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

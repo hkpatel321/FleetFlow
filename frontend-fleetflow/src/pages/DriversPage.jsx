@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { driversAPI } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { AlertTriangle, Edit2, Ban, Trash2 } from 'lucide-react';
 
 const EMPTY_FORM = { full_name: '', phone: '', license_number: '', license_category: '', license_expiry_date: '' };
 
@@ -140,13 +141,13 @@ export default function DriversPage() {
           <h3>{editingDriver ? `Edit: ${editingDriver.full_name}` : 'Add New Driver'}</h3>
           {error && <div className="alert alert-error">{error}</div>}
           <form className="inline-form" onSubmit={handleSubmit}>
-            <input placeholder="Full Name *" value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required />
-            <input placeholder="Phone" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
-            <input placeholder="License Number *" value={form.license_number} onChange={e => setForm({...form, license_number: e.target.value})} required />
-            <input placeholder="Categories * (HMV, LMV, MCWG)" value={form.license_category} onChange={e => setForm({...form, license_category: e.target.value})} required />
+            <input placeholder="Full Name *" value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} required />
+            <input placeholder="Phone" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+            <input placeholder="License Number *" value={form.license_number} onChange={e => setForm({ ...form, license_number: e.target.value })} required />
+            <input placeholder="Categories * (HMV, LMV, MCWG)" value={form.license_category} onChange={e => setForm({ ...form, license_category: e.target.value })} required />
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>License Expiry *</label>
-              <input type="date" value={form.license_expiry_date} onChange={e => setForm({...form, license_expiry_date: e.target.value})} required min={new Date().toISOString().split('T')[0]} />
+              <input type="date" value={form.license_expiry_date} onChange={e => setForm({ ...form, license_expiry_date: e.target.value })} required min={new Date().toISOString().split('T')[0]} />
             </div>
             <button type="submit" className="btn btn-primary">{editingDriver ? 'Update' : 'Create'}</button>
             {editingDriver && <button type="button" className="btn btn-outline" onClick={closeForm}>Cancel</button>}
@@ -199,18 +200,18 @@ export default function DriversPage() {
                     <td>
                       <div className="action-group">
                         {/* Edit */}
-                        <button className="btn btn-sm btn-outline" onClick={() => openEditForm(d)}>
-                          ✏️ Edit
+                        <button className="btn btn-sm btn-outline" onClick={() => openEditForm(d)} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          <Edit2 size={14} style={{ marginRight: 4 }} /> Edit
                         </button>
 
                         {/* Suspend / Unsuspend */}
                         {d.status !== 'Suspended' && d.status !== 'On_Trip' && (
-                          <button className="btn btn-sm btn-danger" onClick={() => handleStatusChange(d.id, 'Suspended')}>
-                            🚫 Suspend
+                          <button className="btn btn-sm btn-danger" onClick={() => handleStatusChange(d.id, 'Suspended')} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                            <Ban size={14} style={{ marginRight: 4 }} /> Suspend
                           </button>
                         )}
                         {d.status === 'Suspended' && !expired && (
-                          <button className="btn btn-sm btn-success" onClick={() => handleStatusChange(d.id, 'Off_Duty')}>
+                          <button className="btn btn-sm btn-success" onClick={() => handleStatusChange(d.id, 'Off_Duty')} style={{ display: 'inline-flex', alignItems: 'center' }}>
                             ✅ Reinstate
                           </button>
                         )}

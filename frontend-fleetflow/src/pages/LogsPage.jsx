@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { maintenanceAPI, fuelAPI, vehiclesAPI, tripsAPI } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { Wrench, Fuel as FuelIcon, BarChart3, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export default function LogsPage() {
   const [tab, setTab] = useState('maintenance');
@@ -52,7 +53,7 @@ export default function LogsPage() {
       await maintenanceAPI.create({ ...mainForm, cost: Number(mainForm.cost) });
       setShowForm(false);
       setMainForm({ vehicle_id: '', service_type: '', cost: '', service_date: '', notes: '' });
-      setNotification('✅ Maintenance log created. Vehicle moved to "In Shop".');
+      setNotification('Maintenance log created. Vehicle moved to "In Shop".');
       setTimeout(() => setNotification(null), 4000);
       fetchData();
     } catch (err) { setError(err.response?.data?.message || 'Failed'); }
@@ -61,7 +62,7 @@ export default function LogsPage() {
   const handleCompleteService = async (logId) => {
     try {
       const res = await maintenanceAPI.completeService(logId);
-      setNotification(`✅ ${res.data.data.message}`);
+      setNotification(res.data.data.message);
       setTimeout(() => setNotification(null), 4000);
       fetchData();
     } catch (err) { alert(err.response?.data?.message || 'Complete failed'); }
@@ -101,10 +102,10 @@ export default function LogsPage() {
         <div>
           <h1>{tab === 'maintenance' ? 'Maintenance Logs' : 'Fuel Logs'}</h1>
           <div className="tab-switch">
-            <button className={`tab-btn ${tab === 'maintenance' ? 'active' : ''}`} onClick={() => { setTab('maintenance'); setShowForm(false); }}>
-              🔧 Maintenance {inShopCount > 0 && <span style={{ background: 'var(--accent-warning)', color: '#000', borderRadius: 10, padding: '1px 6px', fontSize: 11, marginLeft: 4 }}>{inShopCount}</span>}
+            <button className={`tab-btn ${tab === 'maintenance' ? 'active' : ''}`} onClick={() => { setTab('maintenance'); setShowForm(false); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Wrench size={16} /> Maintenance {inShopCount > 0 && <span style={{ background: 'var(--accent-warning)', color: '#000', borderRadius: 10, padding: '1px 6px', fontSize: 11, marginLeft: 4 }}>{inShopCount}</span>}
             </button>
-            <button className={`tab-btn ${tab === 'fuel' ? 'active' : ''}`} onClick={() => { setTab('fuel'); setShowForm(false); }}>⛽ Fuel</button>
+            <button className={`tab-btn ${tab === 'fuel' ? 'active' : ''}`} onClick={() => { setTab('fuel'); setShowForm(false); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><FuelIcon size={16} /> Fuel</button>
           </div>
         </div>
         {canEdit && (
@@ -116,7 +117,8 @@ export default function LogsPage() {
 
       {/* Notification */}
       {notification && (
-        <div className="alert" style={{ background: 'rgba(34,197,94,0.08)', color: 'var(--accent-success)', border: '1px solid rgba(34,197,94,0.2)', marginBottom: 16 }}>
+        <div className="alert" style={{ background: 'rgba(16, 185, 129,0.08)', color: 'var(--accent-success)', border: '1px solid rgba(16, 185, 129,0.2)', marginBottom: 16, display: 'flex', alignItems: 'center' }}>
+          <CheckCircle2 size={16} style={{ marginRight: 8 }} />
           {notification}
         </div>
       )}
@@ -140,11 +142,11 @@ export default function LogsPage() {
       {/* Cost Per Km Summary (Fuel tab) */}
       {tab === 'fuel' && costPerKm.length > 0 && (
         <div className="card" style={{ marginBottom: 16, padding: 16 }}>
-          <h4 style={{ marginBottom: 12, fontSize: 14 }}>📊 Fuel Cost Per Km by Vehicle</h4>
+          <h4 style={{ marginBottom: 12, fontSize: 14, display: 'flex', alignItems: 'center' }}><BarChart3 size={18} style={{ marginRight: 8 }} /> Fuel Cost Per Km by Vehicle</h4>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             {costPerKm.map(v => (
               <div key={v.vehicle_id} style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.08)',
                 borderRadius: 8, padding: '10px 14px', minWidth: 180,
               }}>
                 <div style={{ fontWeight: 600, fontSize: 13 }}>{v.vehicle_name}</div>
@@ -171,14 +173,14 @@ export default function LogsPage() {
       {showForm && tab === 'maintenance' && (
         <div className="card form-card">
           <h3>Add Maintenance Log</h3>
-          <p style={{ fontSize: 12, color: 'var(--accent-warning)', marginBottom: 8 }}>
-            ⚠️ Creating a log will automatically set the vehicle status to "In Shop"
+          <p style={{ fontSize: 12, color: 'var(--accent-warning)', marginBottom: 8, display: 'flex', alignItems: 'center' }}>
+            <AlertTriangle size={14} style={{ marginRight: 6 }} /> Creating a log will automatically set the vehicle status to "In Shop"
           </p>
           {error && <div className="alert alert-error">{error}</div>}
           <form className="inline-form" onSubmit={handleCreateMain}>
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>Vehicle (non-retired)</label>
-              <select value={mainForm.vehicle_id} onChange={e => setMainForm({...mainForm, vehicle_id: e.target.value})} required>
+              <select value={mainForm.vehicle_id} onChange={e => setMainForm({ ...mainForm, vehicle_id: e.target.value })} required>
                 <option value="">Select Vehicle</option>
                 {serviceableVehicles.map(v => (
                   <option key={v.id} value={v.id}>
@@ -187,13 +189,13 @@ export default function LogsPage() {
                 ))}
               </select>
             </div>
-            <input placeholder="Service Type *" value={mainForm.service_type} onChange={e => setMainForm({...mainForm, service_type: e.target.value})} required />
-            <input placeholder="Cost (₹) *" type="number" value={mainForm.cost} onChange={e => setMainForm({...mainForm, cost: e.target.value})} required />
+            <input placeholder="Service Type *" value={mainForm.service_type} onChange={e => setMainForm({ ...mainForm, service_type: e.target.value })} required />
+            <input placeholder="Cost (₹) *" type="number" value={mainForm.cost} onChange={e => setMainForm({ ...mainForm, cost: e.target.value })} required />
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>Service Date</label>
-              <input type="date" value={mainForm.service_date} onChange={e => setMainForm({...mainForm, service_date: e.target.value})} required />
+              <input type="date" value={mainForm.service_date} onChange={e => setMainForm({ ...mainForm, service_date: e.target.value })} required />
             </div>
-            <input placeholder="Notes" value={mainForm.notes} onChange={e => setMainForm({...mainForm, notes: e.target.value})} />
+            <input placeholder="Notes" value={mainForm.notes} onChange={e => setMainForm({ ...mainForm, notes: e.target.value })} />
             <button type="submit" className="btn btn-primary">Create & Send to Shop</button>
           </form>
         </div>
@@ -207,7 +209,7 @@ export default function LogsPage() {
           <form className="inline-form" onSubmit={handleCreateFuel}>
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>Vehicle *</label>
-              <select value={fuelForm.vehicle_id} onChange={e => setFuelForm({...fuelForm, vehicle_id: e.target.value, trip_id: ''})} required>
+              <select value={fuelForm.vehicle_id} onChange={e => setFuelForm({ ...fuelForm, vehicle_id: e.target.value, trip_id: '' })} required>
                 <option value="">Select Vehicle</option>
                 {vehicles.filter(v => v.status !== 'Retired').map(v => (
                   <option key={v.id} value={v.id}>{v.name} ({v.license_plate}) — {v.status.replace('_', ' ')}</option>
@@ -216,7 +218,7 @@ export default function LogsPage() {
             </div>
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>Link to Trip (optional)</label>
-              <select value={fuelForm.trip_id} onChange={e => setFuelForm({...fuelForm, trip_id: e.target.value})}>
+              <select value={fuelForm.trip_id} onChange={e => setFuelForm({ ...fuelForm, trip_id: e.target.value })}>
                 <option value="">No trip (general fueling)</option>
                 {vehicleTrips.map(t => (
                   <option key={t.id} value={t.id}>
@@ -225,17 +227,17 @@ export default function LogsPage() {
                 ))}
               </select>
             </div>
-            <input placeholder="Liters *" type="number" step="0.1" value={fuelForm.liters} onChange={e => setFuelForm({...fuelForm, liters: e.target.value})} required />
-            <input placeholder="Cost/Liter (₹) *" type="number" step="0.01" value={fuelForm.cost_per_liter} onChange={e => setFuelForm({...fuelForm, cost_per_liter: e.target.value})} required />
+            <input placeholder="Liters *" type="number" step="0.1" value={fuelForm.liters} onChange={e => setFuelForm({ ...fuelForm, liters: e.target.value })} required />
+            <input placeholder="Cost/Liter (₹) *" type="number" step="0.01" value={fuelForm.cost_per_liter} onChange={e => setFuelForm({ ...fuelForm, cost_per_liter: e.target.value })} required />
             {fuelPreviewTotal && (
               <div style={{ alignSelf: 'center', fontSize: 13, color: 'var(--accent-primary)', fontWeight: 600 }}>
                 = ₹{Number(fuelPreviewTotal).toLocaleString()} total
               </div>
             )}
-            <input placeholder="Odometer Reading (km)" type="number" value={fuelForm.odometer_reading} onChange={e => setFuelForm({...fuelForm, odometer_reading: e.target.value})} />
+            <input placeholder="Odometer Reading (km)" type="number" value={fuelForm.odometer_reading} onChange={e => setFuelForm({ ...fuelForm, odometer_reading: e.target.value })} />
             <div className="form-group" style={{ margin: 0 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)' }}>Date *</label>
-              <input type="date" value={fuelForm.date} onChange={e => setFuelForm({...fuelForm, date: e.target.value})} required />
+              <input type="date" value={fuelForm.date} onChange={e => setFuelForm({ ...fuelForm, date: e.target.value })} required />
             </div>
             <button type="submit" className="btn btn-primary">Create</button>
           </form>
@@ -265,7 +267,7 @@ export default function LogsPage() {
                 const isInShop = l.vehicle?.status === 'In_Shop';
                 return (
                   <tr key={l.id} style={isInShop ? { background: 'rgba(245, 158, 11, 0.04)' } : {}}>
-                    <td>{l.vehicle?.name || '—'}<br/><small className="text-muted">{l.vehicle?.license_plate}</small></td>
+                    <td>{l.vehicle?.name || '—'}<br /><small className="text-muted">{l.vehicle?.license_plate}</small></td>
                     <td>
                       <span className={`status-badge status-${(l.vehicle?.status || '').toLowerCase().replace(/[_ ]/g, '-')}`}>
                         {(l.vehicle?.status || '').replace('_', ' ')}
@@ -279,8 +281,8 @@ export default function LogsPage() {
                       <td>
                         <div className="action-group">
                           {isInShop && (
-                            <button className="btn btn-sm btn-success" onClick={() => handleCompleteService(l.id)}>
-                              ✅ Complete Service
+                            <button className="btn btn-sm btn-success" onClick={() => handleCompleteService(l.id)} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                              <CheckCircle2 size={14} style={{ marginRight: 4 }} /> Complete Service
                             </button>
                           )}
                           {!isInShop && (
@@ -316,10 +318,10 @@ export default function LogsPage() {
             <tbody>
               {fuelLogs.map(l => (
                 <tr key={l.id}>
-                  <td>{l.vehicle?.name || '—'}<br/><small className="text-muted">{l.vehicle?.license_plate}</small></td>
+                  <td>{l.vehicle?.name || '—'}<br /><small className="text-muted">{l.vehicle?.license_plate}</small></td>
                   <td>
                     {l.trip
-                      ? <span>{l.trip.origin} → {l.trip.destination}<br/><small className="text-muted">{l.trip.status}</small></span>
+                      ? <span>{l.trip.origin} → {l.trip.destination}<br /><small className="text-muted">{l.trip.status}</small></span>
                       : <span className="text-muted">—</span>
                     }
                   </td>
