@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────
+
+enum UserRole {
+  fleet_manager
+  dispatcher
+  safety_officer
+  financial_analyst
+}
+
+enum VehicleType {
+  Truck
+  Van
+  Bike
+}
+
+enum VehicleStatus {
+  Available
+  On_Trip      @map("On Trip")
+  In_Shop      @map("In Shop")
+  Retired
+}
+
+enum DriverStatus {
+  On_Duty     @map("On Duty")
+  Off_Duty    @map("Off Duty")
+  Suspended
+  On_Trip     @map("On Trip")
+}
+
+enum TripStatus {
+  Draft
+  Dispatched
+  Completed
+  Cancelled
+}
+
+// ─── MODELS ──────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String    @unique
+  password_hash String
+  role          UserRole
+  created_at    DateTime  @default(now())
+
+  created_trips        Trip[]           @relation("TripCreator")
+  created_maintenance  MaintenanceLog[] @relation("MaintenanceCreator")
+
+  @@map("users")
+}
+
+model Vehicle {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  model            String?
+  license_plate    String        @unique
+  vehicle_type     VehicleType
+  max_capacity_kg  Decimal
+  odometer_km      Decimal       @default(0)
+  acquisition_cost Decimal?
+  status           VehicleStatus @default(Available)
+  region           String?
+  created_at       DateTime      @default(now())
+
+  trips             Trip[]
+  maintenance_logs  MaintenanceLog[]
+  fuel_logs         FuelLog[]
+
+  @@map("vehicles")
+}
+
+model Driver {
+  id                  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  full_name           String
+  phone               String?
+  license_number      String       @unique
+  license_category    String[]
+  license_expiry_date DateTime     @db.Date
+  safety_score        Decimal      @default(100)
+  total_trips         Int          @default(0)
+  completed_trips     Int          @default(0)
+  status              DriverStatus @default(Off_Duty)
+  created_at          DateTime     @default(now())
+
+  trips Trip[]
+
+  @@map("drivers")
+}
+
+model Trip {
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehicle_id       String?    @db.Uuid
+  driver_id        String?    @db.Uuid
+  origin           String
+  destination      String
+  cargo_weight_kg  Decimal
+  cargo_description String?
+  status           TripStatus @default(Draft)
+  start_odometer   Decimal?
+  end_odometer     Decimal?
+  distance_km      Decimal?
+  revenue          Decimal    @default(0)
+  scheduled_at     DateTime?
+  dispatched_at    DateTime?
+  completed_at     DateTime?
+  created_by       String?    @db.Uuid
+  created_at       DateTime   @default(now())
+
+  vehicle  Vehicle? @relation(fields: [vehicle_id], references: [id])
+  driver   Driver?  @relation(fields: [driver_id], references: [id])
+  creator  User?    @relation("TripCreator", fields: [created_by], references: [id])
+  fuel_logs FuelLog[]
+
+  @@map("trips")
+}
+
+model MaintenanceLog {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehicle_id          String   @db.Uuid
+  service_type        String
+  cost                Decimal
+  service_date        DateTime @db.Date
+  odometer_at_service Decimal?
+  notes               String?
+  created_by          String?  @db.Uuid
+  created_at          DateTime @default(now())
+
+  vehicle Vehicle @relation(fields: [vehicle_id], references: [id])
+  creator User?   @relation("MaintenanceCreator", fields: [created_by], references: [id])
+
+  @@map("maintenance_logs")
+}
+
+model FuelLog {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehicle_id      String   @db.Uuid
+  trip_id         String?  @db.Uuid
+  liters          Decimal
+  cost_per_liter  Decimal
+  total_cost      Decimal?
+  date            DateTime @db.Date
+  odometer_reading Decimal?
+  created_at      DateTime @default(now())
+
+  vehicle Vehicle @relation(fields: [vehicle_id], references: [id])
+  trip    Trip?   @relation(fields: [trip_id], references: [id])
+
+  @@map("fuel_logs")
+}
